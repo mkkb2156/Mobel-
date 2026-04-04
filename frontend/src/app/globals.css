@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-charcoal: #1A1611;
+  --color-cream: #FAF7F2;
+  --color-brass: #8B7355;
+  --color-walnut: #5A4D3C;
+  --color-linen: #E5DED3;
+  --color-brass-light: #A8956F;
+  --color-brass-dark: #6E5A3E;
+  --color-error: #9B2C2C;
+  --color-success: #276749;
+
+  --font-serif: "Cormorant Garamond", "Noto Serif TC", Georgia, serif;
+  --font-sans: "Noto Sans TC", system-ui, sans-serif;
+}
+
+:root {
+  --background: #FAF7F2;
+  --foreground: #1A1611;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Editorial luxury typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styling */
+::selection {
+  background-color: #8B7355;
+  color: #FAF7F2;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E5DED3;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8B7355;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid #8B7355;
+  outline-offset: 2px;
+}
