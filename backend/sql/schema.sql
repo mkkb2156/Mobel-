@@ -87,7 +87,7 @@ CREATE TABLE products (
 
     -- Status
     status                TEXT NOT NULL DEFAULT 'pending'
-                          CHECK (status IN ('pending', 'approved', 'rejected', 'sold', 'unavailable')),
+                          CHECK (status IN ('pending', 'approved', 'rejected', 'sold', 'unavailable', 'review_needed', 'processing')),
     admin_notes           TEXT,
 
     -- Relations

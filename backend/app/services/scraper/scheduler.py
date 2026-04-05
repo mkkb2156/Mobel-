@@ -17,47 +17,50 @@ _scheduler: Optional[AsyncIOScheduler] = None
 
 async def full_scrape_job() -> None:
     """Full scrape: all categories, all pages."""
-    from app.services.scraper.vntg import VntgScraper, VNTG_CATEGORIES
+    from app.services.scrape_orchestrator import ScrapeOrchestrator
 
     logger.info("Starting full scrape job")
-    scraper = VntgScraper()
     try:
-        for category in VNTG_CATEGORIES:
-            count = 0
-            async for product in scraper.scrape_listings(category):
-                count += 1
-                # TODO: persist to DB, enqueue AI pipeline
-            logger.info(f"Full scrape [{category}]: {count} products found")
+        orchestrator = ScrapeOrchestrator()
+        stats = await orchestrator.run_full_scrape()
+        logger.info(
+            f"Full scrape complete: found={stats.products_found}, "
+            f"new={stats.products_new}, errors={len(stats.errors)}"
+        )
     except Exception as exc:
-        logger.error(f"Full scrape failed: {exc}")
-    finally:
-        await scraper.close()
+        logger.error(f"Full scrape job failed: {exc}")
 
 
 async def delta_scrape_job() -> None:
     """Delta scrape: first 2 pages per category for new listings."""
-    from app.services.scraper.vntg import VntgScraper, VNTG_CATEGORIES
+    from app.services.scrape_orchestrator import ScrapeOrchestrator
 
     logger.info("Starting delta scrape job")
-    scraper = VntgScraper()
     try:
-        for category in VNTG_CATEGORIES:
-            count = 0
-            async for product in scraper.scrape_listings(category, max_pages=2):
-                count += 1
-                # TODO: check if already in DB, if not persist + enqueue
-            logger.info(f"Delta scrape [{category}]: {count} products found")
+        orchestrator = ScrapeOrchestrator()
+        stats = await orchestrator.run_delta_scrape()
+        logger.info(
+            f"Delta scrape complete: found={stats.products_found}, "
+            f"new={stats.products_new}, errors={len(stats.errors)}"
+        )
     except Exception as exc:
-        logger.error(f"Delta scrape failed: {exc}")
-    finally:
-        await scraper.close()
+        logger.error(f"Delta scrape job failed: {exc}")
 
 
 async def availability_check_job() -> None:
-    """Check availability of all approved products."""
+    """Check availability of products based on value tier."""
+    from app.services.scrape_orchestrator import ScrapeOrchestrator
+
     logger.info("Starting availability check job")
-    # TODO: query approved products from DB, check each URL
-    logger.info("Availability check complete")
+    try:
+        orchestrator = ScrapeOrchestrator()
+        stats = await orchestrator.run_availability_check()
+        logger.info(
+            f"Availability check complete: checked={stats.products_found}, "
+            f"delisted={stats.products_delisted}, errors={len(stats.errors)}"
+        )
+    except Exception as exc:
+        logger.error(f"Availability check job failed: {exc}")
 
 
 def _parse_cron(expr: str) -> CronTrigger:
