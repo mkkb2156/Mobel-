@@ -53,7 +53,9 @@ class Settings(BaseSettings):
 
     # --- App ---
     app_env: str = "development"
-    app_debug: bool = True
+    app_debug: bool = False
+    port: int = 8000
+    railway_environment: str = ""
     cors_origins: str = '["http://localhost:3000","http://localhost:5173"]'
 
     @property
@@ -66,6 +68,10 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.app_env == "production"
+
+    @property
+    def is_railway(self) -> bool:
+        return bool(self.railway_environment)
 
 
 settings = Settings()
